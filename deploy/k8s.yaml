@@ -8,7 +8,7 @@ metadata:
     deploy.cloud.google.com/location: europe-west1
     deploy.cloud.google.com/project-id: galloro-demos
     deploy.cloud.google.com/release-id: cdongcp-cb5365a
-    deploy.cloud.google.com/target-id: qa
+    deploy.cloud.google.com/target-id: prod
   name: cdongcp-app
 spec:
   ports:
@@ -29,10 +29,10 @@ metadata:
     deploy.cloud.google.com/location: europe-west1
     deploy.cloud.google.com/project-id: galloro-demos
     deploy.cloud.google.com/release-id: cdongcp-cb5365a
-    deploy.cloud.google.com/target-id: qa
+    deploy.cloud.google.com/target-id: prod
   name: cdongcp-app
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: cdongcp-app
@@ -45,12 +45,12 @@ spec:
         deploy.cloud.google.com/location: europe-west1
         deploy.cloud.google.com/project-id: galloro-demos
         deploy.cloud.google.com/release-id: cdongcp-cb5365a
-        deploy.cloud.google.com/target-id: qa
+        deploy.cloud.google.com/target-id: prod
     spec:
       containers:
         - env:
             - name: TARGET
-              value: qa
+              value: prod
           image: europe-west1-docker.pkg.dev/galloro-demos/cd-custom-targets/cdongcp-app:cb5365a@sha256:735e7fbb6a808559294a0f6d37e44f7f6b3e2572af92068fe041629db5c957de
           name: cdongcp-app
           ports:
