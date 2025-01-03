@@ -1,1 +1,70 @@
-
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: cdongcp-app
+    app.kubernetes.io/managed-by: google-cloud-deploy
+    deploy.cloud.google.com/delivery-pipeline-id: cd-argo-pipeline
+    deploy.cloud.google.com/location: europe-west1
+    deploy.cloud.google.com/project-id: galloro-demos
+    deploy.cloud.google.com/release-id: cdongcp-cb5365a
+    deploy.cloud.google.com/target-id: qa
+  name: cdongcp-app
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8081
+  selector:
+    app: cdongcp-app
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: cdongcp-app
+    app.kubernetes.io/managed-by: google-cloud-deploy
+    deploy.cloud.google.com/delivery-pipeline-id: cd-argo-pipeline
+    deploy.cloud.google.com/location: europe-west1
+    deploy.cloud.google.com/project-id: galloro-demos
+    deploy.cloud.google.com/release-id: cdongcp-cb5365a
+    deploy.cloud.google.com/target-id: qa
+  name: cdongcp-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cdongcp-app
+  template:
+    metadata:
+      labels:
+        app: cdongcp-app
+        app.kubernetes.io/managed-by: google-cloud-deploy
+        deploy.cloud.google.com/delivery-pipeline-id: cd-argo-pipeline
+        deploy.cloud.google.com/location: europe-west1
+        deploy.cloud.google.com/project-id: galloro-demos
+        deploy.cloud.google.com/release-id: cdongcp-cb5365a
+        deploy.cloud.google.com/target-id: qa
+    spec:
+      containers:
+        - env:
+            - name: TARGET
+              value: qa
+          image: europe-west1-docker.pkg.dev/galloro-demos/cd-custom-targets/cdongcp-app:cb5365a@sha256:735e7fbb6a808559294a0f6d37e44f7f6b3e2572af92068fe041629db5c957de
+          name: cdongcp-app
+          ports:
+            - containerPort: 8081
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: cdongcp-route
+spec:
+  parentRefs:
+    - kind: Gateway
+      name: cdongcp-gateway
+  rules:
+    - backendRefs:
+        - name: cdongcp-app
+          port: 80
